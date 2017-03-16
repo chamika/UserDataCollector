@@ -1,4 +1,4 @@
-package com.chamika.datacollector.store;
+package com.chamika.research.datacollector.store;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,10 +21,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_EVENTS =
             "CREATE TABLE " + BaseStore.Structure.TABLE_NAME_EVENTS + " (" +
                     BaseStore.Structure._ID + " " + INTEGER_TYPE + " PRIMARY KEY," +
-                    BaseStore.Structure.COLUMN_NAME_APP + TEXT_TYPE + COMMA_SEP +
-                    BaseStore.Structure.COLUMN_NAME_TYPE + TEXT_TYPE + COMMA_SEP +
-                    BaseStore.Structure.COLUMN_NAME_STATE + TEXT_TYPE + COMMA_SEP +
-                    BaseStore.Structure.COLUMN_NAME_HITS + INTEGER_TYPE + " )";
+                    BaseStore.Structure.COLUMN_NAME_ACTION_TYPE + INTEGER_TYPE + COMMA_SEP +
+                    BaseStore.Structure.COLUMN_NAME_EVENT_TYPE + TEXT_TYPE + COMMA_SEP +
+                    BaseStore.Structure.COLUMN_NAME_TIME + INTEGER_TYPE + COMMA_SEP +
+                    BaseStore.Structure.COLUMN_NAME_DATA1 + TEXT_TYPE + COMMA_SEP +
+                    BaseStore.Structure.COLUMN_NAME_DATA2 + TEXT_TYPE + COMMA_SEP +
+                    BaseStore.Structure.COLUMN_NAME_DATA3 + TEXT_TYPE + COMMA_SEP +
+                    BaseStore.Structure.COLUMN_NAME_DATA4 + TEXT_TYPE + " )";
 
     private static final String SQL_DELETE_EVENTS =
             "DROP TABLE IF EXISTS " + BaseStore.Structure.TABLE_NAME_EVENTS;
