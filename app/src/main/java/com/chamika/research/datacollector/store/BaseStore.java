@@ -2,6 +2,7 @@ package com.chamika.research.datacollector.store;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -22,7 +23,7 @@ public class BaseStore {
     public static class Structure implements BaseColumns {
         public static final String COLUMN_NAME_ACTION_TYPE = "action_type";//1=action, 2=event, 3=action+event
         public static final String COLUMN_NAME_EVENT_TYPE = "event_type";//SMS, CALL
-        public static final String COLUMN_NAME_TIME = "event_time";//SMS, CALL
+        public static final String COLUMN_NAME_TIME = "event_time";
         public static final String COLUMN_NAME_DATA1 = "data1";
         public static final String COLUMN_NAME_DATA2 = "data2";
         public static final String COLUMN_NAME_DATA3 = "data3";
@@ -157,6 +158,40 @@ public class BaseStore {
         dbWritable.insert(Structure.TABLE_NAME_EVENTS, null, values);
         Log.d(TAG, "Insert row:" + actionType + "," + eventType + "," + Arrays.toString(data));
         return 1;
+    }
+
+        public static Cursor getDataDesc(Context context) {
+        DBHelper mDbHelper = new DBHelper(context);
+
+        if (dbReadable == null || !dbReadable.isOpen()) {
+            dbReadable = mDbHelper.getReadableDatabase();
+        }
+
+        String[] projection = {
+                Structure._ID,
+                Structure.COLUMN_NAME_ACTION_TYPE,
+                Structure.COLUMN_NAME_EVENT_TYPE,
+                Structure.COLUMN_NAME_TIME,
+                Structure.COLUMN_NAME_DATA1,
+                Structure.COLUMN_NAME_DATA2,
+                Structure.COLUMN_NAME_DATA3,
+                Structure.COLUMN_NAME_DATA4
+        };
+
+//        String selection = Structure.COLUMN_NAME_TYPE + " = ? and " + Structure.COLUMN_NAME_STATE + " = ?";
+//        String[] selectionArgs = {type, state};
+
+        String sortOrder = Structure.COLUMN_NAME_TIME + " DESC";
+
+        return dbReadable.query(
+                Structure.TABLE_NAME_EVENTS,      // The table to query
+                projection,     // The columns to return
+                null,      // The columns for the WHERE clause
+                null,  // The values for the WHERE clause
+                null,           // don't group the rows
+                null,           // don't filter by row groups
+                sortOrder       // The sort order
+        );
     }
 
 

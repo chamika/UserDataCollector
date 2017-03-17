@@ -15,17 +15,26 @@ import me.everything.providers.core.Data;
  */
 
 public class SMSUtil {
+
+    public static final String SMS = "SMS";
+
     public static void getSMS(Context context) {
         TelephonyProvider provider = new TelephonyProvider(context);
         Data<Sms> sms = provider.getSms(TelephonyProvider.Filter.ALL);
         Cursor cursor = sms.getCursor();
+        long startTime = SettingsUtil.getTime(context, "SMS");
+        long endTime = 0;
         if (cursor.moveToFirst()) {
             while (cursor.moveToNext()) {
                 Sms msg = sms.fromCursor(cursor);
                 Log.d(SMSUtil.class.getSimpleName(), "SMS:" + msg.toString());
                 int actionType = (msg.type == Sms.MessageType.SENT) ? 1 : 2;
-                BaseStore.saveEvent(context, actionType, "SMS", msg.receivedDate, msg.address);
+                BaseStore.saveEvent(context, actionType, SMS, msg.receivedDate, msg.address);
+                if (endTime < msg.receivedDate) {
+                    endTime = msg.receivedDate;
+                }
             }
+            SettingsUtil.setTime(context, SMS, endTime);
         }
     }
 }

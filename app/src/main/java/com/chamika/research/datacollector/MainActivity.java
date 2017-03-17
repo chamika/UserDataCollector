@@ -38,4 +38,8 @@ public class MainActivity extends AppCompatActivity {
         manager.cancel(pendingIntent);
         Toast.makeText(this, "Alarm Canceled", Toast.LENGTH_SHORT).show();
     }
+
+    public void view(View v) {
+        startActivity(new Intent(this, DataViewActivity.class));
+    }
 }
