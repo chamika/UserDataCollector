@@ -45,7 +45,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".DataViewActivity"></activity>
+        <activity android:name=".DataViewActivity" />
+        <service android:name=".service.BackgroundService" />
     </application>
 
 </manifest>

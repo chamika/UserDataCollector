@@ -48,7 +48,6 @@ import java.util.TimerTask;
 public class BackgroundService extends Service {
 
     private static final String TAG = BackgroundService.class.getSimpleName();
-    public static final String ACTIVITY_FENCE = "activityFence";
 
     private static Timer timer;
 
@@ -73,24 +72,23 @@ public class BackgroundService extends Service {
                 .build();
         client.connect();
         registerScreenON();
+    }
 
-
+    private void startDetecting() {
         Intent intent = new Intent(Constant.FENCE_RECEIVER_ACTION);
         fencePendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
-        AwarenessFence activityFence = DetectedActivityFence.starting(
-                DetectedActivityFence.IN_VEHICLE,
-                DetectedActivityFence.ON_BICYCLE,
-                DetectedActivityFence.ON_FOOT,
-                DetectedActivityFence.WALKING,
-                DetectedActivityFence.RUNNING);
 
-        registerFence(ACTIVITY_FENCE, activityFence);
+        for (int enabledActivity : Config.ENABLED_ACTIVITIES) {
+            registerFence(Constant.FENCE_ACTIVITY + enabledActivity, DetectedActivityFence.starting(enabledActivity));
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!started) {
-            startSensorReadingSnapshot();
+//            startSensorReadingSnapshot();
+            startDetecting();
+            Log.d(TAG, "activity detection background service started");
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -100,7 +98,10 @@ public class BackgroundService extends Service {
         super.onDestroy();
         stopSensorReadingSnapshot();
         unregisterScreenON();
-        unregisterFence(ACTIVITY_FENCE);
+        for (int enabledActivity : Config.ENABLED_ACTIVITIES) {
+            unregisterFence(Constant.FENCE_ACTIVITY + enabledActivity);
+        }
+        Log.d(TAG, "activity detection background service stopped");
     }
 
     private void startSensorReadingSnapshot() {
@@ -113,8 +114,10 @@ public class BackgroundService extends Service {
     }
 
     private void stopSensorReadingSnapshot() {
+        if (started) {
+            timer.cancel();
+        }
         started = false;
-        timer.cancel();
     }
 
     private void getSnapshotUpdate() {

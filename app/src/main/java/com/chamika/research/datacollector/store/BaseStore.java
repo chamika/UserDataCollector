@@ -160,7 +160,7 @@ public class BaseStore {
         return 1;
     }
 
-        public static Cursor getDataDesc(Context context) {
+    public static Cursor getDataDesc(Context context) {
         DBHelper mDbHelper = new DBHelper(context);
 
         if (dbReadable == null || !dbReadable.isOpen()) {

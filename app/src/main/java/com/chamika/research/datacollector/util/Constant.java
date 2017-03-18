@@ -6,4 +6,6 @@ package com.chamika.research.datacollector.util;
 
 public class Constant {
     public static final String FENCE_RECEIVER_ACTION = "FENCE_ACTION";
+
+    public static final String FENCE_ACTIVITY = "activity";
 }

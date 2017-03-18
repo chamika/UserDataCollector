@@ -23,7 +23,6 @@ public class DataCollectorService extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-//        Toast.makeText(context, "I'm running", Toast.LENGTH_SHORT).show();
         SMSUtil.getSMS(context);
         CallsUtils.getCalls(context);
     }
