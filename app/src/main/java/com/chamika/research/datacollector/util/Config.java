@@ -5,5 +5,7 @@ package com.chamika.research.datacollector.util;
  */
 
 public class Config {
-    public static int REFRESH_INTERVAL = 5000;
+    public static int DATA_COLLECTION_REFRESH_INTERVAL = 5000;
+    public static final int SERVICE_REFRESH_INTERVAL = 10000;
+
 }
