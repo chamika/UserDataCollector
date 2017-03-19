@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initCheckBoxDangerousPermission(int checkboxResId, final String permission, final int permissionRequest, final String settingsPrefKey) {
+        final Context context = MainActivity.this;
         CheckBox checkBox = (CheckBox) findViewById(checkboxResId);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Context context = MainActivity.this;
                 if (isChecked) {
                     if (ContextCompat.checkSelfPermission(MainActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(MainActivity.this,
@@ -65,16 +65,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        checkBox.setChecked(SettingsUtil.getBooleanPref(context, settingsPrefKey));
     }
 
     private void initCheckBoxNormalPermission(int checkboxResId, final String settingsPrefKey) {
+        final Context context = MainActivity.this;
         CheckBox checkBox = (CheckBox) findViewById(checkboxResId);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SettingsUtil.setBooleanPref(MainActivity.this, settingsPrefKey, isChecked);
+                SettingsUtil.setBooleanPref(context, settingsPrefKey, isChecked);
             }
         });
+        checkBox.setChecked(SettingsUtil.getBooleanPref(context, settingsPrefKey));
     }
 
     public void start(View v) {
@@ -113,6 +116,26 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     ((CheckBox) findViewById(R.id.check_calls)).setChecked(false);
                     SettingsUtil.setBooleanPref(this, PREF_CALL, false);
+                }
+            }
+            case PERMISSIONS_REQUEST_READ_SMS: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    ((CheckBox) findViewById(R.id.check_msgs)).setChecked(true);
+                    SettingsUtil.setBooleanPref(this, PREF_MSG, true);
+                } else {
+                    ((CheckBox) findViewById(R.id.check_msgs)).setChecked(false);
+                    SettingsUtil.setBooleanPref(this, PREF_MSG, false);
+                }
+            }
+            case PERMISSIONS_REQUEST_LOCATION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    ((CheckBox) findViewById(R.id.check_location)).setChecked(true);
+                    SettingsUtil.setBooleanPref(this, PREF_LOCATION, true);
+                } else {
+                    ((CheckBox) findViewById(R.id.check_location)).setChecked(false);
+                    SettingsUtil.setBooleanPref(this, PREF_LOCATION, false);
                 }
             }
         }
