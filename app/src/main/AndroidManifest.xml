@@ -36,6 +36,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".service.DataUploaderService">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Will not be called unless the application explicitly enables it -->
         <receiver
             android:name=".service.DeviceBootReceiver"

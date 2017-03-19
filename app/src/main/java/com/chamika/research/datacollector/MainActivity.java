@@ -6,7 +6,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,9 +20,17 @@ import android.widget.Toast;
 
 import com.chamika.research.datacollector.service.BackgroundService;
 import com.chamika.research.datacollector.service.DataCollectorService;
+import com.chamika.research.datacollector.service.DataUploaderService;
 import com.chamika.research.datacollector.util.Config;
 import com.chamika.research.datacollector.util.Constant;
 import com.chamika.research.datacollector.util.SettingsUtil;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_READ_CALL_LOG = 1000;
@@ -41,6 +51,14 @@ public class MainActivity extends AppCompatActivity {
         initCheckBoxDangerousPermission(R.id.check_msgs, Manifest.permission.READ_SMS, PERMISSIONS_REQUEST_READ_SMS, Constant.PREF_MSG);
         initCheckBoxDangerousPermission(R.id.check_location, Manifest.permission.ACCESS_FINE_LOCATION, PERMISSIONS_REQUEST_LOCATION, Constant.PREF_LOCATION);
         initCheckBoxNormalPermission(R.id.check_activities, Constant.PREF_ACTIVITY);
+    }
+
+    private void scheduleDatabaseUpload(Context context) {
+        Intent alarmIntent = new Intent(context, DataUploaderService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        int interval = Config.DATA_UPLOAD_INTERVAL;
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000, interval, pendingIntent);
     }
 
     private void initCheckBoxDangerousPermission(int checkboxResId, final String permission, final int permissionRequest, final String settingsPrefKey) {
@@ -86,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         //ACTIVITY, LOCATION
         startService(new Intent(getApplicationContext(), BackgroundService.class));
 
+        scheduleDatabaseUpload(this);
         Toast.makeText(this, "Started collecting data", Toast.LENGTH_SHORT).show();
     }
 
