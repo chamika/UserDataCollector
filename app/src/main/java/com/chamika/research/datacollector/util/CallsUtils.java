@@ -20,7 +20,7 @@ public class CallsUtils {
     public static final String TAG = CallsUtils.class.getSimpleName();
 
     public static void getCalls(Context context) {
-        if (!SettingsUtil.getBooleanPref(context, Constant.PREF_CALL)){
+        if (!SettingsUtil.getBooleanPref(context, Constant.PREF_CALL)) {
             Log.d(TAG, "Calls sync disabled.");
             return;
         }
@@ -36,7 +36,16 @@ public class CallsUtils {
                 if (lastTime < call.callDate) {
                     Log.d(TAG, "CALL:" + call.toString());
                     int actionType = (call.type == Call.CallType.OUTGOING) ? 1 : 2;
-                    BaseStore.saveEvent(context, actionType, CALL, call.callDate, StringUtil.maskNumber(call.number), String.valueOf(call.duration));
+                    String callType = null;
+                    if (call.type == Call.CallType.OUTGOING) {
+                        callType = "OUTGOING";
+                    } else if (call.type == Call.CallType.INCOMING) {
+                        callType = "INCOMING";
+                    } else if (call.type == Call.CallType.MISSED) {
+                        callType = "MISSED";
+                    }
+
+                    BaseStore.saveEvent(context, actionType, CALL, call.callDate, StringUtil.maskNumber(call.number), String.valueOf(call.duration), callType);
                     if (maxTime < call.callDate) {
                         maxTime = call.callDate;
                     }
