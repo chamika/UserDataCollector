@@ -21,6 +21,17 @@ public class SettingsUtil {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putLong(key, value);
         editor.apply();
+    }
 
+    public static boolean getBooleanPref(Context context, String key) {
+        SharedPreferences sharedPref = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+        return sharedPref.getBoolean(key, false);
+    }
+
+    public static void setBooleanPref(Context context, String key, boolean value) {
+        SharedPreferences sharedPref = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(key, value);
+        editor.apply();
     }
 }
