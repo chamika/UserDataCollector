@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.IBinder;
@@ -57,6 +58,7 @@ public class BackgroundService extends Service {
 //    private final BroadcastReceiver screenReceiver = new ScreenReceiver();
 
     private PendingIntent fencePendingIntent;
+    private FenceReceiver fenceReceiver;
 
     @Nullable
     @Override
@@ -75,6 +77,9 @@ public class BackgroundService extends Service {
     }
 
     private void startDetecting() {
+        fenceReceiver = new FenceReceiver();
+        registerReceiver(fenceReceiver, new IntentFilter(Constant.FENCE_RECEIVER_ACTION));
+
         Intent intent = new Intent(Constant.FENCE_RECEIVER_ACTION);
         fencePendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
 
@@ -101,6 +106,7 @@ public class BackgroundService extends Service {
         for (int enabledActivity : Config.ENABLED_ACTIVITIES) {
             unregisterFence(Constant.FENCE_ACTIVITY + enabledActivity);
         }
+        unregisterReceiver(fenceReceiver);
         Log.d(TAG, "activity detection background service stopped");
     }
 

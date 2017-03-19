@@ -17,24 +17,30 @@ import me.everything.providers.core.Data;
 public class SMSUtil {
 
     public static final String SMS = "SMS";
+    public static final String TAG = SMSUtil.class.getSimpleName();
 
     public static void getSMS(Context context) {
         TelephonyProvider provider = new TelephonyProvider(context);
         Data<Sms> sms = provider.getSms(TelephonyProvider.Filter.ALL);
         Cursor cursor = sms.getCursor();
-        long startTime = SettingsUtil.getTime(context, "SMS");
-        long endTime = 0;
+        long lastTime = SettingsUtil.getTime(context, "SMS");
+        long maxTime = lastTime;
+        int count = 0;
         if (cursor.moveToFirst()) {
             while (cursor.moveToNext()) {
                 Sms msg = sms.fromCursor(cursor);
-                Log.d(SMSUtil.class.getSimpleName(), "SMS:" + msg.toString());
-                int actionType = (msg.type == Sms.MessageType.SENT) ? 1 : 2;
-                BaseStore.saveEvent(context, actionType, SMS, msg.receivedDate, msg.address);
-                if (endTime < msg.receivedDate) {
-                    endTime = msg.receivedDate;
+                if (lastTime < msg.receivedDate) {
+                    Log.d(TAG, "SMS:" + msg.toString());
+                    int actionType = (msg.type == Sms.MessageType.SENT) ? 1 : 2;
+                    BaseStore.saveEvent(context, actionType, SMS, msg.receivedDate, msg.address);
+                    if (maxTime < msg.receivedDate) {
+                        maxTime = msg.receivedDate;
+                    }
+                    count++;
                 }
             }
-            SettingsUtil.setTime(context, SMS, endTime);
+            SettingsUtil.setTime(context, SMS, maxTime);
         }
+        Log.d(TAG, "SMS sync completed." + count + " new msgs added");
     }
 }
