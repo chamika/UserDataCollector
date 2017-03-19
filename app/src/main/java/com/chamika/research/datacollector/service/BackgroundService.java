@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.chamika.research.datacollector.util.Config;
 import com.chamika.research.datacollector.util.Constant;
+import com.chamika.research.datacollector.util.SettingsUtil;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.fence.AwarenessFence;
 import com.google.android.gms.awareness.fence.DetectedActivityFence;
@@ -83,8 +84,12 @@ public class BackgroundService extends Service {
         Intent intent = new Intent(Constant.FENCE_RECEIVER_ACTION);
         fencePendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
 
-        for (int enabledActivity : Config.ENABLED_ACTIVITIES) {
-            registerFence(Constant.FENCE_ACTIVITY + enabledActivity, DetectedActivityFence.starting(enabledActivity));
+        if (SettingsUtil.getBooleanPref(this, Constant.PREF_ACTIVITY)) {
+            for (int enabledActivity : Config.ENABLED_ACTIVITIES) {
+                registerFence(Constant.FENCE_ACTIVITY + enabledActivity, DetectedActivityFence.starting(enabledActivity));
+            }
+        } else {
+            Log.d(TAG, "Activity sync disabled.");
         }
     }
 
@@ -104,7 +109,11 @@ public class BackgroundService extends Service {
         stopSensorReadingSnapshot();
         unregisterScreenON();
         for (int enabledActivity : Config.ENABLED_ACTIVITIES) {
-            unregisterFence(Constant.FENCE_ACTIVITY + enabledActivity);
+            try {
+                unregisterFence(Constant.FENCE_ACTIVITY + enabledActivity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         unregisterReceiver(fenceReceiver);
         Log.d(TAG, "activity detection background service stopped");

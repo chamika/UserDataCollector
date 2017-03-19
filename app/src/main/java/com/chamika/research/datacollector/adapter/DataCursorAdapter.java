@@ -39,7 +39,16 @@ public class DataCursorAdapter extends CursorAdapter {
         TextView textTime = (TextView) view.findViewById(R.id.text_time);
         TextView textData = (TextView) view.findViewById(R.id.text_data);
 
-        textActionType.setText(cursor.getString(cursor.getColumnIndexOrThrow(BaseStore.Structure.COLUMN_NAME_ACTION_TYPE)));
+        int actionType = cursor.getInt(cursor.getColumnIndexOrThrow(BaseStore.Structure.COLUMN_NAME_ACTION_TYPE));
+        String action = "N/A";
+        if(actionType == 1){
+            action = "ACT";
+        }else if(actionType == 2){
+            action = "EVENT";
+        }else if(actionType == 3){
+            action = "ACT/EVT";
+        }
+        textActionType.setText(action);
         textEventType.setText(cursor.getString(cursor.getColumnIndexOrThrow(BaseStore.Structure.COLUMN_NAME_EVENT_TYPE)));
         long timeInMilis = cursor.getLong(cursor.getColumnIndexOrThrow(BaseStore.Structure.COLUMN_NAME_TIME));
         Date date = new Date(timeInMilis);

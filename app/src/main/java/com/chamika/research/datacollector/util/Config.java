@@ -10,6 +10,7 @@ public class Config {
     public static int DATA_COLLECTION_REFRESH_INTERVAL = 5000;
     public static final int SERVICE_REFRESH_INTERVAL = 10000;
 
+    // need to update com.chamika.research.datacollector.service.FenceReceiver.onReceive()
     public static final int[] ENABLED_ACTIVITIES = new int[]{DetectedActivityFence.IN_VEHICLE,
             DetectedActivityFence.ON_BICYCLE,
             DetectedActivityFence.ON_FOOT,
