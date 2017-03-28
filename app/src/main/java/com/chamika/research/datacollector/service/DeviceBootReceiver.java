@@ -13,10 +13,11 @@ public class DeviceBootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+//        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             setupPeriodicalDataCollection(context);
             setupDataUploading(context);
-        }
+            context.startService(new Intent(context.getApplicationContext(), BackgroundService.class));
+//        }
     }
 
     private void setupDataUploading(Context context) {
