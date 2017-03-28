@@ -67,16 +67,6 @@ public class BackgroundService extends Service {
         return binder;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        client = new GoogleApiClient.Builder(this)
-                .addApi(Awareness.API)
-                .build();
-        client.connect();
-        registerScreenON();
-    }
-
     private void startDetecting() {
         fenceReceiver = new FenceReceiver();
         registerReceiver(fenceReceiver, new IntentFilter(Constant.FENCE_RECEIVER_ACTION));
@@ -95,12 +85,19 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(client == null) {
+            client = new GoogleApiClient.Builder(this)
+                    .addApi(Awareness.API)
+                    .build();
+            client.connect();
+            registerScreenON();
+        }
         if (!started) {
 //            startSensorReadingSnapshot();
             startDetecting();
             Log.d(TAG, "activity detection background service started");
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
