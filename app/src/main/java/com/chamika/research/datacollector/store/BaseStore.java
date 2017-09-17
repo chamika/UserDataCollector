@@ -136,7 +136,7 @@ public class BaseStore {
         DBHelper mDbHelper = new DBHelper(context);
 
         if (dbWritable == null || !dbWritable.isOpen()) {
-            dbWritable = mDbHelper.getReadableDatabase();
+            dbWritable = mDbHelper.getWritableDatabase();
         }
 
         ContentValues values = new ContentValues();
